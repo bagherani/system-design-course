@@ -7,7 +7,7 @@ variable "like_service_image_tag" {
 variable "nginx_port" {
   description = "External port for nginx load balancer"
   type        = number
-  default     = 8080
+  default     = 3003
 }
 
 variable "like_service_port_1" {

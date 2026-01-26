@@ -5,7 +5,7 @@ This directory contains Terraform configuration to deploy the LikeService applic
 ## Architecture
 
 - **2 instances** of LikeService running on ports 3001 and 3002
-- **1 nginx container** acting as a load balancer on port 8080
+- **1 nginx container** acting as a load balancer on port 3003
 - All containers connected via a Docker network
 
 ## Prerequisites
@@ -31,6 +31,7 @@ open -a Docker
 ```
 
 **Verify Installation:**
+
 ```bash
 docker --version
 docker ps
@@ -48,6 +49,7 @@ choco install docker-desktop
 ```
 
 **Verify Installation:**
+
 ```powershell
 docker --version
 docker ps
@@ -65,6 +67,7 @@ brew install hashicorp/tap/terraform
 ```
 
 **Verify Installation:**
+
 ```bash
 terraform version
 ```
@@ -76,6 +79,7 @@ choco install terraform
 ```
 
 **Verify Installation:**
+
 ```powershell
 terraform version
 ```
@@ -120,14 +124,15 @@ terraform apply
 ```
 
 This will:
+
 1. Build the LikeService Docker image
 2. Create a Docker network
 3. Start 2 instances of LikeService (ports 3001 and 3002)
-4. Start nginx load balancer (port 8080)
+4. Start nginx load balancer (port 3003)
 
 ### Access the application
 
-- **Through load balancer**: http://localhost:8080
+- **Through load balancer**: http://localhost:3003
 - **Direct access to instance 1**: http://localhost:3001
 - **Direct access to instance 2**: http://localhost:3002
 
@@ -142,7 +147,7 @@ terraform destroy
 You can customize the ports by creating a `terraform.tfvars` file:
 
 ```hcl
-nginx_port          = 8080
+nginx_port          = 3003
 like_service_port_1 = 3001
 like_service_port_2 = 3002
 ```
@@ -153,4 +158,42 @@ The nginx configuration uses **round-robin** load balancing by default, distribu
 
 ## Health Checks
 
-- Nginx health check endpoint: http://localhost:8080/health
+- Nginx health check endpoint: http://localhost:3003/health
+
+## Updating Configuration
+
+### Updating nginx.conf
+
+After editing `nginx.conf`, apply changes:
+
+**Option 1: Reload nginx (no downtime)**
+```bash
+docker exec nginx-load-balancer nginx -s reload
+```
+
+**Option 2: Recreate container with Terraform**
+```bash
+cd infrastructure/horizontal-scaling
+terraform apply
+```
+
+### Updating LikeService Source Code
+
+After making changes to `apps/LikeService/`, rebuild and redeploy:
+
+```bash
+cd infrastructure/horizontal-scaling
+terraform apply
+```
+
+**What happens:**
+- Terraform will rebuild the Docker image using `apps/LikeService/Dockerfile`
+- The new image will be built from your updated source code
+- Containers will be recreated with the new image
+
+**Note:** If Terraform doesn't detect your source code changes, force a rebuild by updating the image tag in `variables.tf` or `terraform.tfvars`:
+
+```hcl
+like_service_image_tag = "v1.1.0"  # Change this to trigger rebuild
+```
+

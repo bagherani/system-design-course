@@ -22,7 +22,7 @@ resource "docker_network" "app_network" {
 resource "docker_image" "like_service" {
   name = "like-service:${var.like_service_image_tag}"
   build {
-    context    = ".."
+    context    = "../.."
     dockerfile = "apps/LikeService/Dockerfile"
   }
 }
@@ -91,7 +91,7 @@ resource "docker_container" "nginx" {
   }
 
   volumes {
-    host_path      = "${path.module}/nginx.conf"
+    host_path      = abspath("${path.module}/nginx.conf")
     container_path = "/etc/nginx/nginx.conf"
     read_only      = true
   }
