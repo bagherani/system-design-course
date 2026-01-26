@@ -45,7 +45,9 @@ resource "docker_container" "like_service_1" {
 
   env = [
     "PORT=3000",
-    "NODE_ENV=production"
+    "NODE_ENV=production",
+    "SERVICE_NAME=like-service-1",
+    "SERVICE_PORT=3001"
   ]
 }
 
@@ -67,7 +69,9 @@ resource "docker_container" "like_service_2" {
 
   env = [
     "PORT=3000",
-    "NODE_ENV=production"
+    "NODE_ENV=production",
+    "SERVICE_NAME=like-service-2",
+    "SERVICE_PORT=3002"
   ]
 }
 

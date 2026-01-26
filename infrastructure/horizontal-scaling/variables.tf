@@ -1,7 +1,7 @@
 variable "like_service_image_tag" {
   description = "Tag for the LikeService Docker image"
   type        = string
-  default     = "1.0.0"
+  default     = "1.0.3"
 }
 
 variable "nginx_port" {
