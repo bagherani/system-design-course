@@ -37,6 +37,56 @@ docker --version
 docker ps
 ```
 
+#### Linux
+
+**Ubuntu/Debian:**
+
+```bash
+# Update package index
+sudo apt-get update
+
+# Install prerequisites
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+# Add Docker's official GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Set up the repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Start Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Add your user to the docker group (optional, to run docker without sudo)
+sudo usermod -aG docker $USER
+```
+
+**Fedora/RHEL/CentOS:**
+
+```bash
+# Install prerequisites
+sudo dnf install -y dnf-plugins-core
+
+# Add Docker repository
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+# Install Docker Engine
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Start Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Add your user to the docker group (optional, to run docker without sudo)
+sudo usermod -aG docker $USER
+```
+
 #### Windows
 
 ```powershell
@@ -70,6 +120,53 @@ brew install hashicorp/tap/terraform
 
 ```bash
 terraform version
+```
+
+#### Linux
+
+**Using package manager (Ubuntu/Debian):**
+
+```bash
+# Install prerequisites
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+
+# Add HashiCorp GPG key
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+# Add HashiCorp repository
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+# Install Terraform
+sudo apt-get update && sudo apt-get install terraform
+```
+
+**Using package manager (Fedora/RHEL/CentOS):**
+
+```bash
+# Install prerequisites
+sudo dnf install -y dnf-plugins-core
+
+# Add HashiCorp repository
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+
+# Install Terraform
+sudo dnf install -y terraform
+```
+
+**Using direct download (any Linux distribution):**
+
+```bash
+# Download latest version (check https://www.terraform.io/downloads for latest)
+TERRAFORM_VERSION="1.6.0"
+wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+# Unzip and install
+unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 ```
 
 #### Windows
