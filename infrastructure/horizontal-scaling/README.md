@@ -78,30 +78,6 @@ terraform version
 choco install terraform
 ```
 
-**Verify Installation:**
-
-```powershell
-terraform version
-```
-
-### Verifying Your Setup
-
-After installing both Docker and Terraform, verify everything is working:
-
-```bash
-# Check Docker
-docker --version
-docker ps
-
-# Check Terraform
-terraform version
-
-# Ensure Docker is running
-docker info
-```
-
-If Docker is not running, start Docker Desktop and wait for it to fully start before proceeding.
-
 ## Usage
 
 ### Initialize Terraform
@@ -119,13 +95,22 @@ terraform plan
 
 ### Apply the configuration
 
+**Important:** Before running `terraform apply`, you must manually build the LikeService application first:
+
+```bash
+# From the monorepo root directory
+pnpm build --filter=like-service
+```
+
+Then apply the Terraform configuration:
+
 ```bash
 terraform apply
 ```
 
 This will:
 
-1. Build the LikeService Docker image
+1. Build the LikeService Docker image (requires pre-built `.next/standalone` directory)
 2. Create a Docker network
 3. Start 2 instances of LikeService (ports 3001 and 3002)
 4. Start nginx load balancer (port 3003)
@@ -181,6 +166,13 @@ terraform apply
 
 After making changes to `apps/LikeService/`, rebuild and redeploy:
 
+**Step 1: Build the LikeService application**
+```bash
+# From the monorepo root directory
+pnpm build --filter=like-service
+```
+
+**Step 2: Apply Terraform configuration**
 ```bash
 cd infrastructure/horizontal-scaling
 terraform apply
@@ -188,6 +180,7 @@ terraform apply
 
 **What happens:**
 - Terraform will rebuild the Docker image using `apps/LikeService/Dockerfile`
+- The Dockerfile copies the pre-built `.next/standalone` directory from your local build
 - The new image will be built from your updated source code
 - Containers will be recreated with the new image
 
