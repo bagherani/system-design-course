@@ -180,7 +180,7 @@ choco install terraform
 ### Initialize Terraform
 
 ```bash
-cd infrastructure
+cd infrastructure/horizontal-scaling
 terraform init
 ```
 
