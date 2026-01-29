@@ -1,0 +1,32 @@
+{
+  "name": "engagement-service",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"next dev --port 3004\" \"pnpm run dev:grpc\"",
+    "dev:grpc": "tsx scripts/grpc-server.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --max-warnings 0",
+    "check-types": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.12.4",
+    "@repo/grpc-engagement": "workspace:*",
+    "next": "16.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2"
+  }
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package engagement;
+
+service EngagementService {
+  rpc GetLikeCounts(GetLikeCountsRequest) returns (GetLikeCountsResponse);
+}
+
+message GetLikeCountsRequest {
+  repeated string post_ids = 1;
+}
+
+message GetLikeCountsResponse {
+  message PostLikes {
+    string post_id = 1;
+    int32 count = 2;
+  }
+  repeated PostLikes posts = 1;
+}

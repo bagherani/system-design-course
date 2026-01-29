@@ -1,9 +1,13 @@
 terraform {
   required_version = ">= 1.0"
-  
+
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
+      version = "~> 3.0"
+    }
+    null = {
+      source  = "hashicorp/null"
       version = "~> 3.0"
     }
   }
@@ -18,6 +22,18 @@ resource "docker_network" "app_network" {
   name = "like-service-network"
 }
 
+# Build the LikeService app before Docker image build (so pre-built standalone exists)
+resource "null_resource" "build_like_service" {
+  triggers = {
+    run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command     = "pnpm build --filter=like-service"
+    working_dir = "${path.module}/../.."
+  }
+}
+
 # Build the LikeService Docker image
 resource "docker_image" "like_service" {
   name = "like-service:${var.like_service_image_tag}"
@@ -25,6 +41,8 @@ resource "docker_image" "like_service" {
     context    = "../.."
     dockerfile = "apps/LikeService/Dockerfile"
   }
+
+  depends_on = [null_resource.build_like_service]
 }
 
 # First instance of LikeService on port 3001

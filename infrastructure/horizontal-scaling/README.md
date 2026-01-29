@@ -192,25 +192,17 @@ terraform plan
 
 ### Apply the configuration
 
-**Important:** Before running `terraform apply`, you must manually build the LikeService application first:
-
-```bash
-# From the monorepo root directory
-pnpm build --filter=like-service
-```
-
-Then apply the Terraform configuration:
-
 ```bash
 terraform apply
 ```
 
 This will:
 
-1. Build the LikeService Docker image (requires pre-built `.next/standalone` directory)
-2. Create a Docker network
-3. Start 2 instances of LikeService (ports 3001 and 3002)
-4. Start nginx load balancer (port 3003)
+1. **Build the LikeService application** (Terraform runs `pnpm build --filter=like-service` as a prerequisite so the Dockerfile has a pre-built `.next/standalone`)
+2. Build the LikeService Docker image
+3. Create a Docker network
+4. Start 2 instances of LikeService (ports 3001 and 3002)
+5. Start nginx load balancer (port 3003)
 
 ### Access the application
 
@@ -261,29 +253,17 @@ terraform apply
 
 ### Updating LikeService Source Code
 
-After making changes to `apps/LikeService/`, rebuild and redeploy:
+After making changes to `apps/LikeService/`, redeploy:
 
-**Step 1: Build the LikeService application**
-```bash
-# From the monorepo root directory
-pnpm build --filter=like-service
-```
-
-**Step 2: Apply Terraform configuration**
 ```bash
 cd infrastructure/horizontal-scaling
 terraform apply
 ```
 
 **What happens:**
-- Terraform will rebuild the Docker image using `apps/LikeService/Dockerfile`
-- The Dockerfile copies the pre-built `.next/standalone` directory from your local build
-- The new image will be built from your updated source code
-- Containers will be recreated with the new image
+- Terraform runs the build step (`pnpm build --filter=like-service`) so the app is built before the Docker image
+- The Docker image is built using the new `.next/standalone` output
+- Containers are recreated with the new image
 
-**Note:** If Terraform doesn't detect your source code changes, force a rebuild by updating the image tag in `variables.tf` or `terraform.tfvars`:
-
-```hcl
-like_service_image_tag = "v1.1.0"  # Change this to trigger rebuild
-```
+**Note:** The build runs on every `terraform apply`. To force a rebuild without other changes, run `terraform apply` again (the build step uses a timestamp trigger).
 

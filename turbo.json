@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalEnv": ["SERVICE_NAME", "SERVICE_PORT", "ENGAGEMENT_GRPC_ADDRESS", "ENGAGEMENT_GRPC_PORT"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
