@@ -1,4 +1,4 @@
 export function getUserId(): string {
   // get userid from jwt token
-  return '1';
+  return Math.random().toString(36).substring(2, 15);
 }
